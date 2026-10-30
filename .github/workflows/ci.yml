@@ -1,3 +1,4 @@
+
 name: Laravel CI Pipeline
 
 on:
@@ -36,6 +37,10 @@ jobs:
           cp .env.example .env
           php artisan key:generate
           php artisan config:clear
+
+      - name: Validar sintaxis PHP
+        run: |
+          find app routes tests -name "*.php" -print0 | xargs -0 -n1 php -l
 
       - name: Ejecutar pruebas automatizadas
         env:
