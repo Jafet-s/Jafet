@@ -50,9 +50,7 @@ jobs:
         run: php artisan test
 
 
-      - name: Instalar dependencias de produccion
-        run: composer install --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader
-
+   
       - name: Generar artefacto de liberacion
         run: |
           tar --exclude='.git' \
@@ -62,7 +60,15 @@ jobs:
               --exclude='phpunit.xml' \
               --exclude='.github' \
               --exclude='storage/logs/*' \
-              -czf laravel-release.tar.gz .
+              -czf "$RUNNER_TEMP/laravel-release.tar.gz" \
+              -C "$GITHUB_WORKSPACE" .
+
+      - name: Publicar artefacto
+        uses: actions/upload-artifact@v4
+        with:
+          name: laravel-release
+          path: ${{ runner.temp }}/laravel-release.tar.gz
+          retention-days: 7
 
       - name: Publicar artefacto
         uses: actions/upload-artifact@v4
